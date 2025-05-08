@@ -13,6 +13,6 @@ COPY ./realm.json /tmp/realm.json
 # Optional: Copy custom themes
 # COPY ./themes/my-theme /opt/keycloak/themes/my-theme
 
-# Enable development mode start
-ENTRYPOINT ["kc.sh"]
+# Start Keycloak in development mode
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 CMD ["start-dev"]
