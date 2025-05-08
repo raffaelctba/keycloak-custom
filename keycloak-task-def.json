@@ -32,6 +32,14 @@
                     "name": "KEYCLOAK_HTTP_PORT",
                     "value": "8080"
                 }
+      { "name": "KC_DB", "value": "postgres" },
+      { "name": "KC_DB_URL", "value": "jdbc:postgresql://ep-silent-king-a554g8b1.us-east-2.aws.neon.tech/keycloak?sslmode=require" },
+      { "name": "KC_DB_USERNAME", "value": "keycloak_owner" },
+      { "name": "KC_DB_PASSWORD", "value": "nJq5gC4hbkWU" },
+      { "name": "KC_METRICS_ENABLED", "value": "true" },
+      { "name": "KC_HEALTH_ENABLED", "value": "true" },
+      { "name": "KC_BOOTSTRAP_ADMIN_USERNAME", "value": "admin" },
+      { "name": "KC_BOOTSTRAP_ADMIN_PASSWORD", "value": "admin" }
             ],
             "logConfiguration": {
                 "logDriver": "awslogs",
