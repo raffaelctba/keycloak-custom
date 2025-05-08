@@ -1,5 +1,5 @@
 # Use Keycloak official image
-FROM quay.io/keycloak/keycloak:26.2.3
+FROM quay.io/keycloak/keycloak:26.2.4
 
 # Set working directory
 WORKDIR /opt/keycloak
@@ -8,7 +8,7 @@ WORKDIR /opt/keycloak
 COPY ./realm.json /tmp/realm.json
 
 # Copy custom extensions
-COPY ./extensions /opt/keycloak/providers/
+# COPY ./extensions /opt/keycloak/providers/
 
 # Optional: Copy custom themes
 # COPY ./themes/my-theme /opt/keycloak/themes/my-theme
