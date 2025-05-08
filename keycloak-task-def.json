@@ -1,5 +1,6 @@
 {
     "family": "keycloak-task",
+    "executionRoleArn": "arn:aws:iam::186215665399:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "requiresCompatibilities": [
         "FARGATE"
