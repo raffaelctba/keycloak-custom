@@ -10,7 +10,7 @@
     "containerDefinitions": [
         {
             "name": "keycloak",
-            "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/keycloak:${IMAGE_TAG}",
+            "image": "186215665399.dkr.ecr.us-east-1.amazonaws.com/keycloak:${IMAGE_TAG}",
             "cpu": 512,
             "memory": 1024,
             "portMappings": [
