@@ -40,7 +40,19 @@
       { "name": "KC_METRICS_ENABLED", "value": "true" },
       { "name": "KC_HEALTH_ENABLED", "value": "true" },
       { "name": "KC_BOOTSTRAP_ADMIN_USERNAME", "value": "admin" },
-      { "name": "KC_BOOTSTRAP_ADMIN_PASSWORD", "value": "admin" }
+      { "name": "KC_BOOTSTRAP_ADMIN_PASSWORD", "value": "admin" },
+                {
+    "name": "KEYCLOAK_HTTP_PORT",
+    "value": "8080"
+},
+{
+    "name": "KEYCLOAK_HTTPS_PORT",
+    "value": "8443"
+},
+{
+    "name": "KEYCLOAK_HTTPS_REQUIRED",
+    "value": "false"
+}
             ],
             "logConfiguration": {
                 "logDriver": "awslogs",
