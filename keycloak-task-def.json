@@ -58,8 +58,9 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-group": "/ecs/keycloak",
+                    "awslogs-create-group": "true",
                     "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "keycloak"
+                    "awslogs-stream-prefix": "ecs-keycloak"
                 }
             },
             "essential": true
