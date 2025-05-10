@@ -11,6 +11,7 @@
         {
             "name": "keycloak",
             "image": "186215665399.dkr.ecr.us-east-1.amazonaws.com/keycloak:${IMAGE_TAG}",
+            "command": ["start-dev"],
             "cpu": 512,
             "memory": 1024,
             "portMappings": [
@@ -32,7 +33,6 @@
                     "name": "KEYCLOAK_HTTP_PORT",
                     "value": "8080"
                 },
-      { "name": "KC_ENV", "value": "dev" },
       { "name": "KC_DB", "value": "postgres" },
       { "name": "KC_DB_URL", "value": "jdbc:postgresql://ep-silent-king-a554g8b1.us-east-2.aws.neon.tech/keycloak?sslmode=require" },
       { "name": "KC_DB_USERNAME", "value": "keycloak_owner" },
