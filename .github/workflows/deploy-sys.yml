@@ -24,74 +24,88 @@
 #    See the documentation for each action used below for the recommended IAM policies for this IAM user,
 #    and best practices on handling the access key credentials.
 
-name: Deploy to Amazon ECS-SYS
+name: Deploy to ECS
 
 on:
-  push:
-    branches: [ "develop" ]
   workflow_dispatch:
-
-env:
-  ENV_NAME: sys
-  AWS_REGION: ${{ secrets.AWS_REGION }}                    # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}            # set this to your Amazon ECR repository name
-  ECS_SERVICE:  ${{ secrets.ECS_SERVICE_NAME }}                 # set this to your Amazon ECS service name
-  ECS_CLUSTER:   ${{ secrets.ECS_CLUSTER_NAME }}                # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION:  ${{ secrets.ECS_TASK_DEFINITION }}  # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
-
-permissions:
-  contents: read
+    inputs:
+      environment:
+        description: "Select the environment to deploy to"
+        required: true
+        type: choice
+        options:
+          - sys
+          - pre
+          - prd
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    environment: sys
+    environment: ${{ inputs.environment }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Validate Git reference
+        run: |
+          case "${{ inputs.environment }}" in
+            sys)
+              [[ "$GITHUB_REF" == "refs/heads/develop" ]] || {
+                echo "❌ SYS can only be deployed from 'develop' branch."
+                exit 1
+              }
+              ;;
+            pre)
+              [[ "$GITHUB_REF" =~ ^refs/heads/release/ ]] || {
+                echo "❌ PRE can only be deployed from 'release/*' branch."
+                exit 1
+              }
+              ;;
+            prd)
+              [[ "$GITHUB_REF" =~ ^refs/tags/v[0-9] ]] || {
+                echo "❌ PRD can only be deployed from version tags like 'v1.0.0'."
+                exit 1
+              }
+              ;;
+          esac
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+      - name: Build, tag, and push Docker image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
-        force-new-deployment: true
+      - name: Fill in the new image ID in the ECS task definition
+        id: render-task
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
+          container-name: ${{ secrets.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE }}
+          cluster: ${{ secrets.ECS_CLUSTER }}
+          wait-for-service-stability: true
+          force-new-deployment: true
