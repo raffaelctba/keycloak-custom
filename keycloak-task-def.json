@@ -5,15 +5,15 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "1024",
-    "memory": "2048",
+    "cpu": "256",
+    "memory": "512",
     "containerDefinitions": [
         {
             "name": "keycloak",
             "image": "186215665399.dkr.ecr.us-east-1.amazonaws.com/keycloak:${IMAGE_TAG}",
             "command": ["start-dev"],
-            "cpu": 512,
-            "memory": 1024,
+            "cpu": 256,
+            "memory": 512,
             "portMappings": [
                 {
                     "containerPort": 8080,
