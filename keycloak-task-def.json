@@ -10,7 +10,7 @@
     "containerDefinitions": [
         {
             "name": "keycloak",
-            "image": "186215665399.dkr.ecr.us-east-1.amazonaws.com/keycloak",
+            "image": "186215665399.dkr.ecr.us-east-1.amazonaws.com/keycloak:$IMAGE_TAG",
             "command": ["start-dev"],
             "cpu": 256,
             "memory": 512,
