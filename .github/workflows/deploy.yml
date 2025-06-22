@@ -68,7 +68,7 @@ jobs:
               -e KC_DB_PASSWORD=${{ vars.KC_DB_PASSWORD }} \
               -e KC_DB_SCHEMA=public \
               -e KC_PROXY=edge \
-              keycloak ${{ vars.KEYCLOAK_START_MODE }} 
+              keycloak-custom ${{ vars.KEYCLOAK_START_MODE }} 
               
           EOF
 
