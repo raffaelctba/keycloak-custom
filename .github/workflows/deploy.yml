@@ -72,8 +72,7 @@ jobs:
               -e KC_HOSTNAME_STRICT=${{ vars.KEYCLOAK_STRICT }} \
               -e KC_HOSTNAME_STRICT_HTTPS=${{ vars.KEYCLOAK_STRICT_HTTPS }} \
               -e KC_DB=postgres \
-              -e KC_DB_URL_HOST=${{ vars.KC_DB_URL }} \
-              -e KC_DB_URL_PORT=5432 \
+              -e KC_DB_URL=${{ vars.KC_DB_URL }} \
               -e KC_DB_USERNAME=${{ vars.KC_DB_USERNAME }} \
               -e KC_DB_PASSWORD=${{ vars.KC_DB_PASSWORD }} \
               -e KC_DB_SCHEMA=public \
