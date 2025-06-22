@@ -25,6 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     steps:
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+      
       - uses: actions/checkout@v4
 
       - name: Log in to Heroku Container Registry
