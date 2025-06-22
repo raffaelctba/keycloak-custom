@@ -45,7 +45,7 @@ jobs:
               -p 8080:8080 \
               -e KEYCLOAK_ADMIN=admin \
               -e KEYCLOAK_ADMIN_PASSWORD=admin \
-              keycloak-app start-dev
+              keycloak-custom start-dev
           EOF
 
   deploy-heroku:
