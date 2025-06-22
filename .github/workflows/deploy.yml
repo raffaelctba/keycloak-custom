@@ -19,6 +19,15 @@ on:
           - sys
           - pre
           - prd
+          
+env:
+  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+  DEV_HOSTNAME: auth-dev.mybuilding.ca
+  PRD_HOSTNAME: auth.mybuilding.ca
+  DEV_ADMIN_USER: devadmin
+  DEV_ADMIN_PASSWORD: devadmin
+  PRD_ADMIN_USER: admin
+  PRD_ADMIN_PASSWORD: admin
 
 jobs:
   deploy-ec2:
@@ -52,17 +61,19 @@ jobs:
             # Stop and remove any existing container
             docker stop keycloak || true
             docker rm keycloak || true
-      
+
+  
             # Run Keycloak with production-ready settings
             docker run -d --name keycloak \
               -p 8080:8080 \
-              -e KEYCLOAK_ADMIN=admin \
-              -e KEYCLOAK_ADMIN_PASSWORD=admin \
-              -e KC_HOSTNAME=auth.mybuilding.ca \
-              -e KC_HOSTNAME_STRICT=false \
-              -e KC_HOSTNAME_STRICT_HTTPS=false \
+              -e KEYCLOAK_ADMIN=${{ secrets.KEYCLOAK_ADMIN }} \
+              -e KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }} \
+              -e KC_HOSTNAME=${{ vars.KEYCLOAK_HOSTNAME }} \
+              -e KC_HOSTNAME_STRICT=${{ vars.KEYCLOAK_STRICT }} \
+              -e KC_HOSTNAME_STRICT_HTTPS=${{ vars.KEYCLOAK_STRICT_HTTPS }} \
               -e KC_PROXY=edge \
-              keycloak-custom start
+              keycloak-custom ${{ vars.KEYCLOAK_START_MODE }} 
+              
           EOF
 
 
