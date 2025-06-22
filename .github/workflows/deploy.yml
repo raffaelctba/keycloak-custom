@@ -35,7 +35,7 @@ jobs:
 
       - name: Deploy to EC2 via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
             docker stop keycloak || true
             docker rm keycloak || true
             cd ~/keycloak-custom || git clone https://github.com/raffaelctba/keycloak-custom.git ~/keycloak-custom && cd ~/keycloak-custom
