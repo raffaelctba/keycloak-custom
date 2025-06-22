@@ -36,17 +36,35 @@ jobs:
       - name: Deploy to EC2 via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            # Ensure Git is installed
+            sudo dnf install -y git
+      
+            # Clone or update the repo
+            if [ ! -d ~/keycloak-custom ]; then
+              git clone https://github.com/raffaelctba/keycloak-custom.git ~/keycloak-custom
+            fi
+            cd ~/keycloak-custom
+            git pull origin main
+      
+            # Build the Docker image
+            docker build -t keycloak-custom .
+      
+            # Stop and remove any existing container
             docker stop keycloak || true
             docker rm keycloak || true
-            cd ~/keycloak-custom || git clone https://github.com/raffaelctba/keycloak-custom.git ~/keycloak-custom && cd ~/keycloak-custom
-            git pull origin main
-            docker build -t keycloak-custom .
+      
+            # Run Keycloak with production-ready settings
             docker run -d --name keycloak \
               -p 8080:8080 \
               -e KEYCLOAK_ADMIN=admin \
               -e KEYCLOAK_ADMIN_PASSWORD=admin \
-              keycloak-custom start-dev
+              -e KC_HOSTNAME=auth.mybuilding.ca \
+              -e KC_HOSTNAME_STRICT=false \
+              -e KC_HOSTNAME_STRICT_HTTPS=false \
+              -e KC_PROXY=edge \
+              keycloak-custom start
           EOF
+
 
   deploy-heroku:
     if: ${{ github.event.inputs.provider == 'heroku' }}
