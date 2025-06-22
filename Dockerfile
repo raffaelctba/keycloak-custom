@@ -2,7 +2,7 @@
 FROM quay.io/keycloak/keycloak:26.2.5
 
 # Set working directory
-WORKDIR /opt/keycloak
+WORKDIR /opt/keycloak-custom
 
 # Copy realm configuration
 COPY ./realm.json /tmp/realm.json
@@ -14,5 +14,5 @@ COPY ./realm.json /tmp/realm.json
 # COPY ./themes/my-theme /opt/keycloak/themes/my-theme
 
 # Start Keycloak in development mode
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+ENTRYPOINT ["/opt/keycloak-custom/bin/kc.sh"]
 CMD ["start-dev"]
