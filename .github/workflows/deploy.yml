@@ -69,7 +69,8 @@ jobs:
               -e KC_DB_USERNAME=${{ vars.KC_DB_USERNAME }} \
               -e KC_DB_PASSWORD=${{ vars.KC_DB_PASSWORD }} \
               -e KC_DB_SCHEMA=public \
-              -e KC_PROXY=edge \
+              -e KC_PROXY_HEADERS=xforwarded \
+              -e KC_HTTP_ENABLED=true \
               keycloak ${{ vars.KEYCLOAK_START_MODE }} 
               
           EOF
