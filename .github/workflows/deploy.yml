@@ -56,6 +56,7 @@ jobs:
   
             # Run Keycloak with production-ready settings
             docker run -d --name keycloak \
+            --restart unless-stopped \
               -p 8080:8080 \
               -e KEYCLOAK_ADMIN=${{ secrets.KEYCLOAK_ADMIN }} \
               -e KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }} \
