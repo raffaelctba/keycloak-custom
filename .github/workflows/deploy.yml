@@ -61,6 +61,7 @@ jobs:
               -e KEYCLOAK_ADMIN=${{ secrets.KEYCLOAK_ADMIN }} \
               -e KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }} \
               -e KC_HOSTNAME=${{ vars.KEYCLOAK_HOSTNAME }} \
+              -e KC_HOSTNAME_URL=https://auth-dev.mybuilding.ca \
               -e KC_HOSTNAME_STRICT=${{ vars.KEYCLOAK_STRICT }} \
               -e KC_HOSTNAME_STRICT_HTTPS=${{ vars.KEYCLOAK_STRICT_HTTPS }} \
               -e KC_DB=postgres \
